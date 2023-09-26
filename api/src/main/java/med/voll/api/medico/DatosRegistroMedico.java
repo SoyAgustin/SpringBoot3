@@ -1,6 +1,7 @@
 package med.voll.api.medico;
 
-import med.voll.api.DatosDireccion;
+
+import med.voll.api.direccion.DatosDireccion;
 
 /*Un record es un objeto inmutable que solo
 * sirve para almacenar los datos para despues

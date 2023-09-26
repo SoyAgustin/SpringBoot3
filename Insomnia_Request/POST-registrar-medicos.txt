@@ -1,0 +1,11 @@
+{ "nombre": "Rodrigo Lopez",
+ "email": "rodrigo.lopez@voll.med",
+ "documento": "12345",
+ "especialidad": "ORTOPEDIA",
+ "direccion":{ 
+	 "calle": "calle 1",
+	 "distrito": "distrito 1",
+	 "ciudad": "Lima",
+	 "numero": "1",
+	 "complemento": "a" }
+}

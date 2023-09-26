@@ -1,0 +1,12 @@
+{
+	"nombre": "Paciete 1",
+ 	"email": "Paciete.lopez@paciente.med",
+ 	"documento_identidad": "123.456.789-01",
+	"telefono":"5519350826",
+	"direccion":{ 
+		"calle": "calle 2",
+		"distrito": "distrito 3",
+		"ciudad": "Lima",
+		"numero": "1",
+		"complemento": "e" } 
+}

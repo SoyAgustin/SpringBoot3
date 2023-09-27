@@ -1,6 +1,6 @@
-package med.voll.api.medico;
+package med.voll.api.domain.medico;
 
-import med.voll.api.direccion.DatosDireccion;
+import med.voll.api.domain.direccion.DatosDireccion;
 
 /*DTO para el método actualizarMedico, no es bueno retornar la enntidad, por eso se creo este
 * record.*/

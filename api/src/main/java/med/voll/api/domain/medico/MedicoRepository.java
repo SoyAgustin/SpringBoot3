@@ -1,10 +1,8 @@
-package med.voll.api.medico;
+package med.voll.api.domain.medico;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 /*Con un repositrio se puede hacer la gestion con la DB
 * sustiruye al patrón DAO

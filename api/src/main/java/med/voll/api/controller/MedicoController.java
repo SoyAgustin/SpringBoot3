@@ -38,7 +38,9 @@ public class MedicoController {
 
     @GetMapping
     public Page<DatosListadoMedico> listadoMedicos(@PageableDefault(size= 2)  Pageable paginacion){
-        return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
+        //return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
+        /*Se pueden hacer consultas dinámicas con findBy"Nombre de la columna""Valor"*/
+        return medicoRepository.findByActivoTrue(paginacion).map(DatosListadoMedico::new);
     }
 
     /*Creamos un nuevo DTO para los datos actualizables, ya que la especialidad
@@ -51,13 +53,26 @@ public class MedicoController {
     medico.actualizarDatos(datosActualizarMedico);
     }
 
-    //DELETE completo de la base de datos.
-    /*Para el delete se usan variable paths, la url con path final id
+
+    /*DELETE completo de la base de datos.
+    *Para el delete se usan variable paths, la url con path final id
     * va a eliminar de la db al médico con dicho id*/
+    /*
     @DeleteMapping(path = "/{id}")
     @Transactional
     public void eliminarMedico(@PathVariable Long id){
         Medico medico = medicoRepository.getReferenceById(id);
         medicoRepository.delete(medico);
+    }
+    */
+
+    //DELETE lógico se mantienen los registros pero cambia activo a false.
+    /*Para el delete se usan variable paths, la url con path final id
+     * va a eliminar de la db al médico con dicho id*/
+    @DeleteMapping(path = "/{id}")
+    @Transactional
+    public void eliminarMedico(@PathVariable Long id){
+        Medico medico = medicoRepository.getReferenceById(id);
+        medico.desactivarMedico();
     }
 }

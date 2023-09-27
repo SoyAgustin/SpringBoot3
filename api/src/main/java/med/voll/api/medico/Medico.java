@@ -27,10 +27,12 @@ public class Medico {
     private Especialidad especialidad;
     @Embedded
     private Direccion direccion;
+    private Boolean activo; // Añadimos nuevo campo
 
     /*Constructor para hacer la persistencia en la base de datos
     * con los datos del médico crea un médico*/
     public Medico(DatosRegistroMedico datosRegistroMedico) {
+        this.activo = true; // Por defecto todo medico va a ser activo
         this.nombre = datosRegistroMedico.nombre();
         this.email = datosRegistroMedico.email();
         this.telefono = datosRegistroMedico.telefono();
@@ -51,4 +53,7 @@ public class Medico {
         }
     }
 
+    public void desactivarMedico() {
+        this.activo = false;
+    }
 }

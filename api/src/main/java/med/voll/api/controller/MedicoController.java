@@ -8,6 +8,7 @@ import med.voll.api.medico.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +25,18 @@ public class MedicoController {
        medicoRepository.save(new Medico(datosRegistroMedico));
     }
 
+    /*Usando query params directamennte e la url se
+    * puedenn cambiar los parametros de paginacion.
+    * por ejemplo endpoint/?size=1&page=2
+    * retorna 1 solo registro por pagina, en este caso
+    * seria el segundo registro ya que por pagina se
+    * muestra 1
+    *
+    * También se pueden ingresar esos parámetros por defult con la anotacion
+    * @PageableDefault()*/
+
     @GetMapping
-    public Page<DatosListadoMedico> listadoMedicos(Pageable paginacion){
+    public Page<DatosListadoMedico> listadoMedicos(@PageableDefault(size= 2)  Pageable paginacion){
         return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("/medicos")
@@ -58,10 +59,10 @@ public class MedicoController {
     * @PageableDefault()*/
 
     @GetMapping
-    public Page<DatosListadoMedico> listadoMedicos(@PageableDefault(size= 2)  Pageable paginacion){
+    public ResponseEntity<Page<DatosListadoMedico>> listadoMedicos(@PageableDefault(size= 2)  Pageable paginacion){
         //return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
         /*Se pueden hacer consultas dinámicas con findBy"Nombre de la columna""Valor"*/
-        return medicoRepository.findByActivoTrue(paginacion).map(DatosListadoMedico::new);
+        return ResponseEntity.ok(medicoRepository.findByActivoTrue(paginacion).map(DatosListadoMedico::new));
     }
 
 
@@ -113,4 +114,25 @@ public class MedicoController {
         medico.desactivarMedico();
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<DatosRespuestaMedico> retornnarDatosMedico(@PathVariable Long id){
+        Medico medico = medicoRepository.getReferenceById(id);
+        var datosMedico =new DatosRespuestaMedico(
+                medico.getId(),
+                medico.getNombre(),
+                medico.getEmail(),
+                medico.getTelefono(),
+                medico.getEspecialidad().toString(),
+                new DatosDireccion(
+                        medico.getDireccion().getCalle(),
+                        medico.getDireccion().getDistrito(),
+                        medico.getDireccion().getCiudad(),
+                        medico.getDireccion().getNumero(),
+                        medico.getDireccion().getComplemento()
+                )
+        );
+        return ResponseEntity.ok(datosMedico);
+    }
+
 }

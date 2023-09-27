@@ -2,28 +2,49 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import med.voll.api.direccion.DatosDireccion;
 import med.voll.api.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/medicos")
 public class MedicoController {
-    /*Esta anotacion  'conecta' con el repositorio MedicoRepository
-    que es en donde  se sustituye el controlador DAO.'*/
-    @Autowired // No es recomendable usar esta anotacion aqui, ya que en pruebas unitarias puede causar problemas
+
+    @Autowired
     private MedicoRepository medicoRepository;
     @PostMapping
-    public void registrarMedico(@RequestBody @Valid DatosRegistroMedico datosRegistroMedico){
-       medicoRepository.save(new Medico(datosRegistroMedico));
-       /*En este caso no es necesaria la anotacion Transactional porque se esta
-       * llamando directamente al repositorio y guardando, es decir se usa directamente
-       * JPA, en caso de que no sea así es necesaria la anotación Transactional*/
+    /*Los generics de ResponnseEntity son el tipo de respuesta del método*/
+    public ResponseEntity<DatosRespuestaMedico> registrarMedico(@RequestBody @Valid DatosRegistroMedico datosRegistroMedico, UriComponentsBuilder uriComponentsBuilder){
+
+       Medico medico = medicoRepository.save(new Medico(datosRegistroMedico));
+
+       DatosRespuestaMedico datosRespuestaMedico = new DatosRespuestaMedico(
+               medico.getId(),
+               medico.getNombre(),
+               medico.getEmail(),
+               medico.getTelefono(),
+               medico.getEspecialidad().toString(),
+               new DatosDireccion(
+                       medico.getDireccion().getCalle(),
+                       medico.getDireccion().getDistrito(),
+                       medico.getDireccion().getCiudad(),
+                       medico.getDireccion().getNumero(),
+                       medico.getDireccion().getComplemento()
+            )
+       );
+        URI url = uriComponentsBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+       return ResponseEntity.created(url).body(datosRespuestaMedico);
+    //Se debe devolver un 201 Created
+    // De forma estándar (no solo java) se debe retornar la ruta en donde se guardo el objeto.
     }
 
     /*Usando query params directamennte e la url se
@@ -43,14 +64,28 @@ public class MedicoController {
         return medicoRepository.findByActivoTrue(paginacion).map(DatosListadoMedico::new);
     }
 
-    /*Creamos un nuevo DTO para los datos actualizables, ya que la especialidad
-    * el email y el documento no pueden ser actualizados*/
+
     @PutMapping
-    @Transactional //Muy importante esta anotacion, ya que es la que hace que se actualice la db
-    //En caso de que ocurra un error con Transactional se hace un rollback
-    public void actualizarMedico(@RequestBody @Valid DatosActualizarMedico datosActualizarMedico){
+    @Transactional
+    /*Ahora se retornna un 200 ok pero tambien se retornnan los datos actualizados*/
+    public ResponseEntity actualizarMedico(@RequestBody @Valid DatosActualizarMedico datosActualizarMedico){
     Medico medico = medicoRepository.getReferenceById(datosActualizarMedico.id());
     medico.actualizarDatos(datosActualizarMedico);
+    return ResponseEntity.ok(new DatosRespuestaMedico(
+            medico.getId(),
+            medico.getNombre(),
+            medico.getEmail(),
+            medico.getTelefono(),
+            medico.getEspecialidad().toString(),
+            new DatosDireccion(
+                    medico.getDireccion().getCalle(),
+                    medico.getDireccion().getDistrito(),
+                    medico.getDireccion().getCiudad(),
+                    medico.getDireccion().getNumero(),
+                    medico.getDireccion().getComplemento()
+            )
+        )
+    );
     }
 
 
@@ -71,8 +106,11 @@ public class MedicoController {
      * va a eliminar de la db al médico con dicho id*/
     @DeleteMapping(path = "/{id}")
     @Transactional
-    public void eliminarMedico(@PathVariable Long id){
+    /*Usando ResponseEntity podemos retornar el código html correcto
+    * en este caso un no Content que corresponde a un 204*/
+    public ResponseEntity minarMedico(@PathVariable Long id){
         Medico medico = medicoRepository.getReferenceById(id);
         medico.desactivarMedico();
+        return ResponseEntity.noContent().build();
     }
 }

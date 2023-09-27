@@ -1,10 +1,8 @@
 package med.voll.api.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.medico.DatosListadoMedico;
-import med.voll.api.medico.DatosRegistroMedico;
-import med.voll.api.medico.Medico;
-import med.voll.api.medico.MedicoRepository;
+import med.voll.api.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +21,9 @@ public class MedicoController {
     @PostMapping
     public void registrarMedico(@RequestBody @Valid DatosRegistroMedico datosRegistroMedico){
        medicoRepository.save(new Medico(datosRegistroMedico));
+       /*En este caso no es necesaria la anotacion Transactional porque se esta
+       * llamando directamente al repositorio y guardando, es decir se usa directamente
+       * JPA, en caso de que no sea así es necesaria la anotación Transactional*/
     }
 
     /*Usando query params directamennte e la url se
@@ -38,5 +39,15 @@ public class MedicoController {
     @GetMapping
     public Page<DatosListadoMedico> listadoMedicos(@PageableDefault(size= 2)  Pageable paginacion){
         return medicoRepository.findAll(paginacion).map(DatosListadoMedico::new);
+    }
+
+    /*Creamos un nuevo DTO para los datos actualizables, ya que la especialidad
+    * el email y el documento no pueden ser actualizados*/
+    @PutMapping
+    @Transactional //Muy importante esta anotacion, ya que es la que hace que se actualice la db
+    //En caso de que ocurra un error con Transactional se hace un rollback
+    public void actualizarMedico(@RequestBody @Valid DatosActualizarMedico datosActualizarMedico){
+    Medico medico = medicoRepository.getReferenceById(datosActualizarMedico.id());
+    medico.actualizarDatos(datosActualizarMedico);
     }
 }

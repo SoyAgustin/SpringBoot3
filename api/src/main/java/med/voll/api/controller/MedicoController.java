@@ -50,4 +50,14 @@ public class MedicoController {
     Medico medico = medicoRepository.getReferenceById(datosActualizarMedico.id());
     medico.actualizarDatos(datosActualizarMedico);
     }
+
+    //DELETE completo de la base de datos.
+    /*Para el delete se usan variable paths, la url con path final id
+    * va a eliminar de la db al médico con dicho id*/
+    @DeleteMapping(path = "/{id}")
+    @Transactional
+    public void eliminarMedico(@PathVariable Long id){
+        Medico medico = medicoRepository.getReferenceById(id);
+        medicoRepository.delete(medico);
+    }
 }

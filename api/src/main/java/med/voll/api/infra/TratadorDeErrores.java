@@ -2,6 +2,8 @@ package med.voll.api.infra;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,6 +17,26 @@ public class TratadorDeErrores {
     * va a lanzar este método que retorna un 404 error*/
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity tratarError404(){
-        return  ResponseEntity.notFound().build(); // Este es el 404 error
+        return  ResponseEntity.notFound().build(); // Este es el 404 error sin mensaje de regreso
     }
+
+    /*Con este método vamos a solucionar el código de error que se envía
+    * en el payload de refgreso al cliente, para que solo muestre algunos y no todos los
+    * errores a nivel de clases.*/
+    /*Por ejemplo cuando se registra un médico sin los campos de nombre, email y documento*/
+    /*El argumento del metodo debe ser el mismo que el tipo de excepcion que declaramos
+    * en el ExceptionHandler*/
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity tratarError400(MethodArgumentNotValidException e){
+        var errores = e.getFieldErrors().stream().map(DatosErrorValidacion::new).toList();
+        return  ResponseEntity.badRequest().body(errores);
+    }
+
+    /*Este es el DTO para los mensajes del error 400*/
+    private record DatosErrorValidacion(String campo, String error){
+        public DatosErrorValidacion(FieldError error){
+            this(error.getField(), error.getDefaultMessage()); //solo devolvemos el campo y el mensaje
+        }
+    }
+
 }

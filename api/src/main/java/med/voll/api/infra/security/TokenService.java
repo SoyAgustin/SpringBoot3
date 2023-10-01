@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import med.voll.api.domain.usuarios.Usuario;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,9 +16,12 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
+    @Value("${api.security.secret}")
+    private String apiSecret;//Configurado en el archivo properties
+
     public String generarToken(Usuario usuario){
         try {
-            Algorithm algorithm = Algorithm.HMAC256("123456");
+            Algorithm algorithm = Algorithm.HMAC256(apiSecret);
             return JWT.create()
                     .withIssuer("voll med")
                     .withSubject(usuario.getLogin())

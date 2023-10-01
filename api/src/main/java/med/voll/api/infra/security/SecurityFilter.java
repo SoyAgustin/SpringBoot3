@@ -17,9 +17,9 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("El filtro esta siendo llamado antes de cualquier request");
-        /*El filtro debe mandar el request y la respuesta de vuelta, si no esta esto implementado
-        * se retorna un 200 ok vacío.*/
+        //Se debe obtener el token por medio del header
+        var token =request.getHeader("Authorization").replace("Bearer ","");
+        System.out.println(token);
         filterChain.doFilter(request,response);
     }
 }

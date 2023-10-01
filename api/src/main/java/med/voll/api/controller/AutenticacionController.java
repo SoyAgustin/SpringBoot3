@@ -1,5 +1,6 @@
 package med.voll.api.controller;
 
+import jakarta.validation.Valid;
 import med.voll.api.domain.usuarios.DatosAutenticacionUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class AutenticacionController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @PostMapping
-    public ResponseEntity autenticarusuario(@RequestBody DatosAutenticacionUsuario datosAutenticacionUsuario){
+    public ResponseEntity autenticarusuario(@RequestBody @Valid DatosAutenticacionUsuario datosAutenticacionUsuario){
         Authentication token = new UsernamePasswordAuthenticationToken(datosAutenticacionUsuario.login(),datosAutenticacionUsuario.clave()); //Aqui se ingresa el usuario y contraseña que se por medio del record que creamos
         authenticationManager.authenticate(token);
         return ResponseEntity.ok().build(); // retorna un 200

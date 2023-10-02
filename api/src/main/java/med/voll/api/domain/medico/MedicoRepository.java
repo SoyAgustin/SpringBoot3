@@ -19,11 +19,11 @@ public interface MedicoRepository extends JpaRepository<Medico,Long> {
     * la sintaxis es abrir y cerrar con tres comillas*/
     @Query("""
             SELECT m FROM Medico m 
-            WHERE m.activo = 1 AND
+            WHERE m.activo = TRUE AND
             m.especialidad=:especialidad AND
             m.id NOT IN(
                 SELECT c.medico.id FROM Consulta c
-                c.data=:fecha
+                WHERE c.data=:fecha
             )
             ORDER BY RAND()
             LIMIT 1

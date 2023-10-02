@@ -107,7 +107,7 @@ public class MedicoController {
     @Transactional
     /*Usando ResponseEntity podemos retornar el código html correcto
     * en este caso un no Content que corresponde a un 204*/
-    public ResponseEntity minarMedico(@PathVariable Long id){
+    public ResponseEntity eliminarMedico(@PathVariable Long id){
         Medico medico = medicoRepository.getReferenceById(id);
         medico.desactivarMedico();
         return ResponseEntity.noContent().build();

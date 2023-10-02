@@ -1,0 +1,1 @@
+UPDATE pacientes SET activo = 1;

@@ -21,7 +21,10 @@ public class SecurityConfigurations {
     * teníamos sin autenticacion por defecto.*/
     @Bean//Anotacion importante para que Spring detecte el método y se cambie la configuracion
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().build();
+        return httpSecurity.csrf().disable().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .build();
     }
 
     /*Se usa e AuthenticationcController, realiza una consulta a la base de datos configurada,

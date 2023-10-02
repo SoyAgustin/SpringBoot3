@@ -41,6 +41,10 @@ public class TokenService {
     Si el JWT es correcto devuelve el subjecct asociado a ese JWT, en este caso
             devuelve al usuario*/
     public String getSubject(String token ){
+        if(token==null){
+            throw new RuntimeException();
+        }
+
         /*Parte de este codigo se obtuvo del github de Auth0: verify JWT*/
         DecodedJWT verifier=null;
         try {

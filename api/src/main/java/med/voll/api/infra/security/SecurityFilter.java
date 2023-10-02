@@ -24,15 +24,18 @@ public class SecurityFilter extends OncePerRequestFilter {
         /*Se debe obtener el token por medio del header
         * Se debe usar Authorization, es el estándar.
         * En este caso se carga el token en Insomnia en la pestaña de bearer*/
+
         var token =request.getHeader("Authorization");
-        if(token ==null || token==""){
-            throw new RuntimeException("El token no es valido o esta vacio");
+
+        if(token !=null ){
+            System.out.println("validamos que el token no es null");
+            token = token.replace("Bearer ","");
+            System.out.println(token);
+            System.out.println(tokenService.getSubject(token));
+        }else{
+            throw new RuntimeException("Token vacio");
         }
-        token = token.replace("Bearer ","");
-        System.out.println(token);
-        /*En el siguiente sout se devuelve el usuario, pero funciona solo si se está enviando otro
-        * JWT*/
-        System.out.println(tokenService.getSubject(token)); 
         filterChain.doFilter(request,response);
+
     }
 }

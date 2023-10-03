@@ -1,6 +1,7 @@
 package med.voll.api.domain.consulta;
 
 import jakarta.validation.Valid;
+import med.voll.api.domain.consulta.desafio.ValidadorCancelamientoDeConsulta;
 import med.voll.api.domain.consulta.validaciones.ValidadorDeConsultas;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
@@ -28,6 +29,9 @@ public class AgendaDeConsultaService {
     @Autowired
     List<ValidadorDeConsultas> validadores;
 
+    @Autowired
+    List<ValidadorCancelamientoDeConsulta> validadoresCancelamiento;
+
     public DatosDetalleConsulta agendar(@Valid DatosAgendarConsulta datos){
         /*dos formas de buscar por id y retornar booleano en caso de existir
         * .isPresent() o existByNombre()*/
@@ -51,10 +55,22 @@ public class AgendaDeConsultaService {
             throw new ValidacionDeIntegridad("No existen medicos disponibles para este horario y especialidad");
         }
 
-        var consulta = new Consulta(null,medico,paciente, datos.fecha());
+        var consulta = new Consulta(medico,paciente,datos.fecha());
         consultaRepository.save(consulta);
 
         return new DatosDetalleConsulta(consulta);
+    }
+
+    public void cancelar(@Valid DatosCancelamientoConsulta datos){
+        if(!consultaRepository.existsById(datos.idConsulta())){
+            throw new ValidacionDeIntegridad("Id de la consulta no existe, no es posible cancelar");
+        }
+
+        validadoresCancelamiento.forEach(validador -> validador.validar(datos));
+
+        var consulta = consultaRepository.getReferenceById(datos.idConsulta());
+        consulta.cancelar(datos.motivo());
+
     }
 
     /*La regla de negocio dice que si el medico no se indica explicitamente se debe

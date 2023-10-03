@@ -1,6 +1,7 @@
 package med.voll.api.controller;
 
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.voll.api.domain.consulta.AgendaDeConsultaService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @ResponseBody
 @RequestMapping("/consulta")
+@SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
 
     @Autowired
@@ -37,7 +39,7 @@ public class ConsultaController {
         System.out.println(datos);
         /*Se debe hacer un tratamiento completo en el metodo cancelar
         * en alguna parte se debe agregar un metodo para actualizar el estado de las consultas*/
-        response = servicio.cancelar(datos);
+        servicio.cancelar(datos);
         return ResponseEntity.ok().build();
     }
 }

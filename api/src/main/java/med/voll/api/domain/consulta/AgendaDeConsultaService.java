@@ -1,6 +1,7 @@
 package med.voll.api.domain.consulta;
 
 import jakarta.validation.Valid;
+import med.voll.api.domain.consulta.validaciones.ValidadorDeConsultas;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.Paciente;
@@ -8,6 +9,8 @@ import med.voll.api.domain.paciente.PacienteRepository;
 import med.voll.api.infra.errores.ValidacionDeIntegridad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /*En esta clase vamos a colocar las reglas de negocio
 * las validaciones para que agendar una consulta sea posible*/
@@ -19,6 +22,11 @@ public class AgendaDeConsultaService {
     private PacienteRepository pacienteRepository;
     @Autowired
     private MedicoRepository medicoRepository;
+
+    /*En vez de colocar como atributos cada una de las validaciones lo hacemos en forma de lista de la interfaz, cuando colocamos el
+    * Autowired todas ls clases que implementen la intefaz seran 'cableados'*/
+    @Autowired
+    List<ValidadorDeConsultas> validadores;
 
     public void agendar(@Valid DatosAgendarConsulta datos){
         /*dos formas de buscar por id y retornar booleano en caso de existir
@@ -35,8 +43,9 @@ public class AgendaDeConsultaService {
         /*Sin el metodo get final no se retorna un tipo de variable paciente o medico*/
         Paciente paciente = pacienteRepository.findById(datos.idPaciente()).get();
 
-        //Validaciones del paquete validaciones
+        //Validaciones del paquete validaciones, se validan todas con un unico foreach
 
+        validadores.forEach(validador ->validador.validar(datos));
 
         Medico medico = seleccionarMedico(datos);
 

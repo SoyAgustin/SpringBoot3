@@ -3,10 +3,12 @@ package med.voll.api.domain.consulta.validaciones;
 import jakarta.validation.ValidationException;
 import med.voll.api.domain.consulta.DatosAgendarConsulta;
 import med.voll.api.infra.errores.ValidacionDeIntegridad;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
+@Component
 
-public class HorarioDeFuncionamientoClinica {
+public class HorarioDeFuncionamientoClinica implements  ValidadorDeConsultas {
 
     /*metodo para validar lque no se agende cita en domingo o fuera del
     * horario de atencion que es de 7:00 a 19:00 horas*/

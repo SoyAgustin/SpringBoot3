@@ -18,7 +18,7 @@ public class HorarioDeFuncionamientoClinica implements  ValidadorDeConsultas {
         var  antesDeApertura=datos.fecha().getHour()<7;
         var despuesDeCierre=datos.fecha().getHour()>19;
         if(domingo || antesDeApertura || despuesDeCierre){
-            throw new ValidationException("El horario de la clinica es de lunes a sabado de 7:00 a 19:00 hoas");
+            throw new ValidationException("El horario de la clinica es de lunes a sabado de 7:00 a 19:00 horas");
         }
 
     }

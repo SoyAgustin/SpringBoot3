@@ -28,29 +28,33 @@ public class AgendaDeConsultaService {
     @Autowired
     List<ValidadorDeConsultas> validadores;
 
-    public void agendar(@Valid DatosAgendarConsulta datos){
+    public DatosDetalleConsulta agendar(@Valid DatosAgendarConsulta datos){
         /*dos formas de buscar por id y retornar booleano en caso de existir
         * .isPresent() o existByNombre()*/
-        if(pacienteRepository.findById(datos.idPaciente()).isPresent()){
+        if(!pacienteRepository.findById(datos.idPaciente()).isPresent()){
             throw new ValidacionDeIntegridad("Este Id para el paciente no fue encontrado");
         }
 
-        if (datos.idMedico()!=null && medicoRepository.existsById(datos.idMedico())){
+        if (datos.idMedico()!=null && !medicoRepository.existsById(datos.idMedico())){
             throw new ValidacionDeIntegridad("Este Id para el medico no fue encontrado");
 
         }
 
+        //Validaciones del paquete validaciones, se validan todas con un unico foreach
+        validadores.forEach(validador ->validador.validar(datos));
+
         /*Sin el metodo get final no se retorna un tipo de variable paciente o medico*/
         Paciente paciente = pacienteRepository.findById(datos.idPaciente()).get();
 
-        //Validaciones del paquete validaciones, se validan todas con un unico foreach
-
-        validadores.forEach(validador ->validador.validar(datos));
-
         Medico medico = seleccionarMedico(datos);
+        if(medico==null){
+            throw new ValidacionDeIntegridad("No existen medicos disponibles para este horario y especialidad");
+        }
 
         var consulta = new Consulta(null,medico,paciente, datos.fecha());
         consultaRepository.save(consulta);
+
+        return new DatosDetalleConsulta(consulta);
     }
 
     /*La regla de negocio dice que si el medico no se indica explicitamente se debe

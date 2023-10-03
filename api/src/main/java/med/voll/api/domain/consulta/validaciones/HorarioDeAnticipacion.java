@@ -18,7 +18,7 @@ public class HorarioDeAnticipacion implements  ValidadorDeConsultas {
         Boolean diferenciaDe30min = Duration.between(ahora, horaDeConsulta).toMinutes() < 30;
 
 
-        if (!diferenciaDe30min) {
+        if (diferenciaDe30min) {
             throw new ValidationException("Las consultas deben tener al menos 30 minutos de anticipacion");
         }
     }

@@ -18,7 +18,7 @@ public class MedicoActivo  implements  ValidadorDeConsultas{
         var medicoActivo = repository.findActivoById(datos.idMedico());
 
         if(!medicoActivo){
-            throw new ValidationException("El paciente no es un paciente activo");
+            throw new ValidationException("El medico no es un medico activo");
         }
 
     }

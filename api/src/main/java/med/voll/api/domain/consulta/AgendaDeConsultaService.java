@@ -35,6 +35,9 @@ public class AgendaDeConsultaService {
         /*Sin el metodo get final no se retorna un tipo de variable paciente o medico*/
         Paciente paciente = pacienteRepository.findById(datos.idPaciente()).get();
 
+        //Validaciones del paquete validaciones
+
+
         Medico medico = seleccionarMedico(datos);
 
         var consulta = new Consulta(null,medico,paciente, datos.fecha());

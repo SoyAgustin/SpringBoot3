@@ -1,7 +1,6 @@
 package med.voll.api.domain.consulta;
 
 import jakarta.validation.Valid;
-import med.voll.api.domain.consulta.desafio.ValidadorCancelamientoDeConsulta;
 import med.voll.api.domain.consulta.validaciones.ValidadorDeConsultas;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
@@ -29,8 +28,6 @@ public class AgendaDeConsultaService {
     @Autowired
     List<ValidadorDeConsultas> validadores;
 
-    @Autowired
-    List<ValidadorCancelamientoDeConsulta> validadoresCancelamiento;
 
     public DatosDetalleConsulta agendar(@Valid DatosAgendarConsulta datos){
         /*dos formas de buscar por id y retornar booleano en caso de existir
@@ -61,17 +58,7 @@ public class AgendaDeConsultaService {
         return new DatosDetalleConsulta(consulta);
     }
 
-    public void cancelar(@Valid DatosCancelamientoConsulta datos){
-        if(!consultaRepository.existsById(datos.idConsulta())){
-            throw new ValidacionDeIntegridad("Id de la consulta no existe, no es posible cancelar");
-        }
 
-        validadoresCancelamiento.forEach(validador -> validador.validar(datos));
-
-        var consulta = consultaRepository.getReferenceById(datos.idConsulta());
-        consulta.cancelar(datos.motivo());
-
-    }
 
     /*La regla de negocio dice que si el medico no se indica explicitamente se debe
     * escoger un medico de forma aleatoria siempre y cuando el medico y el paciente sean activos

@@ -18,7 +18,12 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-/*Como vamos a testear en este caso consultas de JPA se neceusita la anotacion DataJpaTest*/
+/*Como vamos a testear en este caso consultas de JPA se neceusita la anotacion DataJpaTest
+*
+* La estructura general de los test son
+*  - DADOS(given) un conjunto de valores
+*  -CUANDO(when) se realiza una accion
+*  -ENTONCES(then) veridicamos que se obtenga un cierto valor  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)//Para bases de datos externas,  no en memoria
 @ActiveProfiles("test")
